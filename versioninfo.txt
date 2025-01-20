@@ -18,12 +18,12 @@ VSVersionInfo(
           '040904B0',            # Language and codepage
           [
             StringStruct('CompanyName',      'Your Company Name'),
-            StringStruct('FileDescription',  'DVMonOPCLogger - OPC DA CLI Utility'),
+            StringStruct('FileDescription',  'OPC Logger - OPC DA CLI Utility'),
             StringStruct('FileVersion',      '1.0.0.0'),
-            StringStruct('InternalName',     'DVMonOPCLogger'),
+            StringStruct('InternalName',     'OPCLogger'),
             StringStruct('LegalCopyright',   'Copyright © 2025'),
-            StringStruct('OriginalFilename', 'DVMonOPCLogger.exe'),
-            StringStruct('ProductName',      'DVMonOPCLogger'),
+            StringStruct('OriginalFilename', 'OPCLogger.exe'),
+            StringStruct('ProductName',      'OPCLogger'),
             StringStruct('ProductVersion',   '1.0.0.0')
           ]
         )
