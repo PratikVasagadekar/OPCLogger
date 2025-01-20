@@ -1,0 +1,36 @@
+name: Build 32-bit PyInstaller Executable
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-32bit:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python (32-bit)
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12.8'  # or any 32-bit Python version you prefer
+          architecture: 'x86'
+
+      - name: Install PyInstaller
+        run: |
+          pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Build the executable
+        # Replace 'OPCLogger.spec' with the path to your actual .spec file if needed
+        run: pyinstaller OPCLogger.spec
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: OPCLogger-exe
+          path: dist
