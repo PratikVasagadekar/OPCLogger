@@ -55,7 +55,7 @@ def read_tags(filepath):
 def write_values(filepath, values):
     """
     Writes the provided list of `values` into the same file as a 'Value' column.
-    The file must already exist with at least the 'Tag' column. 
+    The file must already exist with at least the 'Tag' column.
     """
     try:
         if filepath.endswith('.xlsx'):
@@ -96,25 +96,33 @@ class OPCHandler:
             sys.exit(1)
 
     def run(self):
+        """
+        Reads all tags in batches only once, writes them to file,
+        then closes the OPC connection and exits.
+        """
         self.connect()
-        while True:
-            try:
-                all_values = []
-                for i in range(0, len(self.tags), self.maxtags):
-                    batch = self.tags[i:i+self.maxtags]
-                    values = self.opc.read(batch)
-                    self.logger.info(f"Read values for batch {i//self.maxtags + 1}: {values}")
-                    all_values.extend(values)
-                write_values(self.filepath, all_values)
-                self.logger.info(f"Successfully wrote values to {self.filepath}")
-                time.sleep(self.interval)
-            except KeyboardInterrupt:
-                self.logger.info("Stopping OPC Logger.")
-                self.opc.close()
-                sys.exit(0)
-            except Exception as e:
-                self.logger.error(f"Error during OPC read/write: {e}")
-                time.sleep(self.interval)
+        try:
+            all_values = []
+            # Read in batches to avoid requesting too many tags at once
+            for i in range(0, len(self.tags), self.maxtags):
+                batch = self.tags[i:i+self.maxtags]
+                values = self.opc.read(batch)
+                self.logger.info(f"Read values for batch {i//self.maxtags + 1}: {values}")
+                all_values.extend(values)
+
+            # Write values to the original file
+            write_values(self.filepath, all_values)
+            self.logger.info(f"Successfully wrote values to {self.filepath}")
+
+        except KeyboardInterrupt:
+            self.logger.info("Stopping OPC Logger due to KeyboardInterrupt.")
+        except Exception as e:
+            self.logger.error(f"Error during OPC read/write: {e}")
+        finally:
+            # Close OPC connection and exit gracefully
+            self.logger.info("Closing OPC connection and exiting.")
+            self.opc.close()
+            sys.exit(0)  # or simply return if you don't want an explicit system exit
 
 @click.command()
 @click.option(
@@ -140,7 +148,7 @@ class OPCHandler:
     '--intervalseconds',
     type=int,
     default=60,
-    help='Provide a number in seconds that will be used to wait until the next burst runs.'
+    help='Provide a number in seconds that will be used to wait until the next burst runs (no longer used in one-pass mode).'
 )
 @click.option(
     '--info',
@@ -165,7 +173,7 @@ def main(tagfile, servername, maxtagsperinterval, intervalseconds, info):
         logger.error(f"Failed to read tag file: {e}")
         sys.exit(1)
 
-    opc = OPCHandler(
+    opc_handler = OPCHandler(
         servername=servername,
         maxtags=maxtagsperinterval,
         interval=intervalseconds,
@@ -173,7 +181,7 @@ def main(tagfile, servername, maxtagsperinterval, intervalseconds, info):
         filepath=tagfile,
         logger=logger
     )
-    opc.run()
+    opc_handler.run()
 
 if __name__ == '__main__':
     main()
