@@ -30,7 +30,7 @@ jobs:
         run: pyinstaller OPCLogger.spec
 
       - name: Upload EXE artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: OPCLogger-exe
           path: dist
