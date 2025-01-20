@@ -3,3 +3,4 @@ OpenOPC-DA
 pandas==2.0.3
 openpyxl
 click
+numpy==1.26.4
