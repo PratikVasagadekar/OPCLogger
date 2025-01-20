@@ -23,7 +23,8 @@ jobs:
       - name: Install PyInstaller
         run: |
           pip install --upgrade pip
-          pip install pyinstaller
+          pip install -r requirements.txt
+
 
       - name: Build the executable
         # Replace 'OPCLogger.spec' with the path to your actual .spec file if needed
