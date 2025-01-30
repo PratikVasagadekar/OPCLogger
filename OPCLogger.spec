@@ -42,4 +42,3 @@ exe = EXE(
     version='versioninfo.txt',
     entitlments_file=None
 )
-
